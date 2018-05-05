@@ -16,7 +16,9 @@ redux 一个独立的状态管理库
 
 createState  函数用来创建store 接受一个回调函数reducer，回调函数接收俩个参数 = {state, action}
 
-组件中使用store.dispatch(action) 提交action， action是一个对象
+组件中使用store.dispatch(action) 提交action， action是一个对象，然后就会触发reducer函数返回新的state，进而触发subscribe函数，重新渲染视图
 
---- 4-2
+thunk 插件可以dispatch一个action函数
+
+ -- 4-5
 ````
