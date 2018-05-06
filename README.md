@@ -20,5 +20,9 @@ createState  函数用来创建store 接受一个回调函数reducer，回调函
 
 thunk 插件可以dispatch一个action函数
 
+Redirect 直接渲染
+
+Switch 只渲染命中的第一个路由
+
  -- 4-5
 ````
