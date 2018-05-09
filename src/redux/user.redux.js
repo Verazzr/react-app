@@ -1,46 +1,57 @@
 import axios from 'axios'
 
-const LOGIN = 'LOGIN'
-const LOGOUT = 'LOGOUT'
-const USER_DATA = 'USER_DATA'
+// type
+const REGISTER_SUCCESS = 'REGISTER_SUCCESS'
+const ERROR_MSG = 'ERROR_MSG'
 
 const initState = {
+	msg: '',
 	isAuth: false,
-	name: '李云龙',
-	age: 20
+	user: '',
+	pwd: '',
+	type: '',
 }
-export function auth (state=initState, action) {
+
+// reducer
+export function user (state=initState, action) {
 	switch (action.type) {
-		case LOGIN:
-			return {...state, isAuth: true}
-		case LOGOUT:
-			return {...state, isAuth:false}
-		case USER_DATA:
-			return {...state, ...action.payload}
+		case REGISTER_SUCCESS:
+			return { ...state, msg: '', isAuth: true, ...action.payload }
+		case ERROR_MSG:
+			return { ...state, msg: action.msg, isAuth: false }
 		default:
 			return state
 	}
 }
 
-// action
-export function getUserData () {
-		return dispatch => {
-			axios.get('/data').then(res => {
-				if (res.status === 200) {
-					dispatch(userData(res.data))
-				}
-			})
-		}
+function registerSuccess (data) {
+	return { type: REGISTER_SUCCESS, payload: data }
 }
 
-export function userData (data) {
-	return {type: USER_DATA, payload: data}
+function errorMsg (msg) {
+	return { msg, type: ERROR_MSG }
 }
 
-export function login () {
-	return {type: LOGIN}
-}
-
-export function logout () {
-	return {type: LOGOUT}
+// action creator
+export function register({ user, pwd, repeatpwd, type }) {
+	if (!user || !pwd || !type) {
+		return errorMsg('用户名密码必须输入')
+	}
+	if (pwd !== repeatpwd) {
+		return errorMsg('密码和确认密码不同')
+	}
+	return dispatch => {
+		axios.post('/user/register',
+		{
+			user,
+			pwd,
+			type
+		}).then(res => {
+			if (res.status === 200 && res.data.code === 0) {
+				dispatch(registerSuccess({user, pwd, type}))
+			} else {
+				dispatch(errorMsg(res.data.msg))
+			}
+		})
+	}
 }
